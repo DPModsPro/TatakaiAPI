@@ -10,7 +10,7 @@ const configuredProxyUrls = (process.env.STREAM_PROXY_URLS || "")
 
 if (configuredProxyUrls.length === 0) {
     configuredProxyUrls.push(
-      "http://localhost:9000/api/proxy/m3u8-streaming-proxy",
+      "https://api.tatakai.me/api/proxy/m3u8-streaming-proxy",
 
         "https://kira.tatakai.me"
     );
@@ -51,7 +51,7 @@ const probeProxyNode = async (url: string) => {
     const start = performance.now();
     try {
         const probeUrl = isSelfProxyNode(url)
-            ? "http://localhost:9000/health"
+            ? "https://api.tatakai.me/health"
             : `${url}${url.includes("?") ? "&" : "?"}url=${encodeURIComponent("https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8")}`;
         const resp = await withTimeout(fetch(probeUrl, { method: "GET" }), 4000);
         const latency = Math.round(performance.now() - start);
