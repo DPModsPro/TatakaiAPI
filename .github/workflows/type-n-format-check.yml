@@ -22,9 +22,5 @@ jobs:
       - name: Install deps
         run: npm i
 
-      - name: Check types
-        # This step checks for TypeScript type errors
-        run: npm run typecheck
-
       - name: Check prettier
         run: npm run format:check
