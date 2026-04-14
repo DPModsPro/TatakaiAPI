@@ -1,6 +1,6 @@
 {
     "name": "tatakapi",
-    "version": "5.0.0",
+    "version": "6.0.0",
     "description": "NodeJS API for obtaining anime data from hianimez.to",
     "main": "dist/src/server.js",
     "type": "module",
