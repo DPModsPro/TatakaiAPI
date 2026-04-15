@@ -182,8 +182,16 @@ animeRoutes.get("/justanime/stream", async (c) => {
   const upstreamUrl = `${upstreamBase}/stream?id=${encodeURIComponent(id)}&server=${encodeURIComponent(server)}&type=${encodeURIComponent(type)}`;
 
   try {
-    const upstreamResponse = await fetch(upstreamUrl, {
-      headers: {
+    const headerProfiles: Array<Record<string, string>> = [
+      {
+        Accept: "application/json, text/plain, */*",
+      },
+      {
+        Accept: "application/json, text/plain, */*",
+        "User-Agent":
+          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+      },
+      {
         Accept: "application/json, text/plain, */*",
         "Accept-Language": "en-US,en;q=0.9",
         Origin: "https://tatakai.me",
@@ -191,11 +199,32 @@ animeRoutes.get("/justanime/stream", async (c) => {
         "User-Agent":
           "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
       },
-      redirect: "follow",
-      signal: AbortSignal.timeout(8000),
-    });
+    ];
 
-    const rawText = await upstreamResponse.text();
+    let upstreamResponse: Response | null = null;
+    let rawText = "";
+
+    for (const headers of headerProfiles) {
+      const candidate = await fetch(upstreamUrl, {
+        headers,
+        redirect: "follow",
+        signal: AbortSignal.timeout(8000),
+      });
+
+      const candidateText = await candidate.text();
+
+      upstreamResponse = candidate;
+      rawText = candidateText;
+
+      // Prefer the first successful response; retry only for blocked/throttled statuses.
+      if (candidate.ok) break;
+      if (![401, 403, 429].includes(candidate.status)) break;
+    }
+
+    if (!upstreamResponse) {
+      return c.json({ success: false, message: "Upstream request did not return a response" }, 502);
+    }
+
     const contentType = upstreamResponse.headers.get("content-type") || "application/json; charset=utf-8";
 
     if (!upstreamResponse.ok) {
