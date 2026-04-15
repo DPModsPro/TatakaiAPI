@@ -178,7 +178,7 @@ animeRoutes.get("/justanime/stream", async (c) => {
     return c.json({ success: false, message: "Missing required query: id" }, 400);
   }
 
-  const upstreamBase = String(process.env.JUSTANIME_API_BASE || "https://core.justanime.fun/api").replace(/\/+$/, "");
+  const upstreamBase = String(process.env.JUSTANIME_API_BASE || "https://mx1.tatakai.me/api").replace(/\/+$/, "");
   const upstreamUrl = `${upstreamBase}/stream?id=${encodeURIComponent(id)}&server=${encodeURIComponent(server)}&type=${encodeURIComponent(type)}`;
 
   try {
@@ -186,8 +186,8 @@ animeRoutes.get("/justanime/stream", async (c) => {
       headers: {
         Accept: "application/json, text/plain, */*",
         "Accept-Language": "en-US,en;q=0.9",
-        Origin: "https://justanime.fun",
-        Referer: "https://justanime.fun/",
+        Origin: "https://tatakai.me",
+        Referer: "https://tatakai.me/",
         "User-Agent":
           "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
       },
